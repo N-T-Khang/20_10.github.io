@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chúc Mừng Mẹ Yêu | 20/10 💖</title>
+    
+    <!-- Tải Tailwind CSS cho styling hiện đại và nhanh chóng -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Font chữ bay bổng, lãng mạn cho tiêu đề và chữ ký -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Tải icon từ Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary-color: #d63384; /* Hồng lãng mạn */
+            --secondary-color: #fbc2eb; /* Hồng nhạt nền */
+            --bg-start: #a18cd1; /* Tím nhạt */
+            --bg-end: #fbc2eb; /* Hồng nhạt */
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden; 
+            background: linear-gradient(135deg, var(--bg-start) 0%, var(--bg-end) 100%);
+        }
+
+        /* CARD CHUNG */
+        .app-card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            z-index: 10;
+            opacity: 1; 
+            transition: all 0.5s ease-in-out;
+            transform: translateY(0);
+        }
+        .hidden-card {
+            display: none;
+        }
+
+        #title {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary-color);
+            font-size: 3rem;
+        }
+
+        /* NÚT */
+        .action-button {
+            border: none;
+            padding: 12px 30px; 
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .action-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        #reveal-btn { background-color: var(--primary-color); color: white; }
+        #deny-btn { background-color: #fca5a5; color: #b91c1c; }
+        
+        /* PHONG BÌ */
+        .envelope-wrapper { 
+            display: none; 
+            position: absolute;
+        }
+        .envelope {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background-color: #f7d9e9; 
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .lid {
+            position: absolute;
+            left: 0; top: 0;
+            width: 0; height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 100px solid var(--secondary-color);
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 3;
+        }
+        .envelope-wrapper.open .lid { transform: rotateX(180deg); }
+        .letter {
+            position: absolute;
+            background: #fff;
+            width: 280px;
+            height: 180px;
+            border-radius: 5px;
+            top: 10px; left: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.6s ease-in-out 0.3s;
+        }
+        .envelope-wrapper.open .letter { transform: translateY(-80px) scale(1.1); }
+        .heart-seal {
+            position: absolute;
+            top: 75px; left: 50%;
+            transform: translateX(-50%) scale(1);
+            font-size: 2.5rem;
+            z-index: 4;
+            transition: all 0.3s ease;
+        }
+        .envelope-wrapper.open .heart-seal { opacity: 0; transform: translateX(-50%) scale(0.5); }
+        
+        /* NỘI DUNG THƯ */
+        .letter-content p {
+            font-size: 1.15rem;
+            color: #444;
+            line-height: 1.8;
+            min-height: 150px; 
+            text-align: left; 
+            white-space: pre-wrap; 
+        }
+        .typing-cursor { animation: blink 0.7s infinite; color: var(--primary-color); }
+        @keyframes blink { 50% { opacity: 0; } }
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: #555;
+            margin-top: 25px;
+            text-align: right;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        /* --- STAGE 4: ALBUM ẢNH CÁ NHÂN --- */
+        #photo-gallery {
+            display: none; 
+            max-width: 900px;
+            width: 95%;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.95);
+            margin: 20px auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .gallery-title {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary-color);
+            font-size: 2.8rem;
+            margin-bottom: 25px;
+        }
+        
+        .album-container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px; /* Khoảng cách giữa các mục ảnh */
+        }
+
+        /* Cấu trúc item ảnh */
+        .album-item {
+            display: flex;
+            align-items: center;
+            opacity: 0; /* Ẩn ban đầu */
+            transform: translateY(20px) scale(0.9);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
+            background: var(--secondary-color);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hiển thị item */
+        .album-item.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1); 
+        }
+
+        /* Chú thích bên phải (Ảnh bên trái) */
+        .album-item:nth-child(even) {
+            flex-direction: row-reverse; /* Đảo ngược thứ tự ảnh và text */
+        }
+        .album-item:nth-child(even) .photo-box {
+            margin-right: 0;
+            margin-left: 15px;
+        }
+        
+        .photo-box {
+            width: 45%;
+            flex-shrink: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            margin-right: 15px;
+            position: relative; /* Dùng cho carousel */
+        }
+        /* [START FIX] Thay đổi object-fit: cover thành contain để ảnh không bị cắt */
+        .photo-box img {
+            width: 100%;
+            height: auto;
+            object-fit: contain; /* Đảm bảo ảnh hiển thị toàn bộ */
+            aspect-ratio: 4/3; 
+            transition: transform 0.5s ease;
+        }
+        /* [END FIX] */
+        .photo-box img:hover {
+            transform: scale(1.05);
+        }
+
+        /* CAROUSEL STYLES */
+        .carousel-container {
+            position: relative;
+            overflow: hidden; 
+        }
+        .carousel-track {
+            display: flex;
+            width: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide {
+            flex-shrink: 0; 
+            width: 100%;
+            /* [START FIX] Tăng chiều cao tối đa của slide để ảnh có không gian hiển thị tỷ lệ thật */
+            max-height: 400px; 
+            display: flex; /* Dùng flex để căn giữa ảnh */
+            justify-content: center;
+            align-items: center;
+            background-color: #fff; /* Thêm nền trắng cho khoảng trống */
+            /* [END FIX] */
+        }
+        .carousel-slide img {
+             /* [START FIX] Đảm bảo ảnh luôn nằm trong khung carousel */
+             width: 100%;
+             height: 100%;
+             object-fit: contain; /* Dùng contain để ảnh không bị cắt */
+             /* [END FIX] */
+             height: auto;
+        }
+        .carousel-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.7);
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            z-index: 20;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+        .carousel-nav-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .prev-btn { left: 10px; }
+        .next-btn { right: 10px; }
+
+        .caption-box {
+            width: 55%;
+            text-align: left;
+        }
+        .caption-box h3 {
+            font-size: 1.6rem;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+        }
+        .caption-box p {
+            font-size: 1rem;
+            color: #4a4a4a;
+            line-height: 1.5;
+        }
+
+        /* Mobile Responsive: Chuyển thành 1 cột */
+        @media (max-width: 640px) {
+            .album-item, .album-item:nth-child(even) {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 15px;
+            }
+            .photo-box, .caption-box {
+                width: 100%;
+                margin: 0;
+            }
+            .photo-box {
+                order: 1; /* Ảnh nằm trên */
+                margin-bottom: 10px;
+            }
+            .caption-box {
+                order: 2; /* Chú thích nằm dưới */
+            }
+            .album-item:nth-child(even) .photo-box {
+                margin: 0;
+                margin-bottom: 10px;
+            }
+            .caption-box h3 {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* CUSTOM MESSAGE BOX (Thay thế alert) */
+        #message-box {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+            border: 3px solid var(--primary-color);
+            display: none;
+            max-width: 80%;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Nhạc nền được quản lý bằng JavaScript Playlist -->
+    <!-- ĐÃ CẬP NHẬT: Thay thế src="nhac_nen_20_10.mp3" bằng thẻ audio rỗng -->
+    <audio id="bg-music" src="" preload="auto"></audio>
+
+    <!-- CUSTOM MESSAGE BOX -->
+    <div id="message-box" class="flex flex-col items-center">
+        <p id="message-content" class="text-lg font-semibold text-gray-700 mb-4"></p>
+        <button id="message-ok-btn" class="action-button bg-pink-500 text-white px-6 py-2">Đã hiểu! 😍</button>
+    </div>
+    
+    <!-- STAGE 1: LỜI MỜI MỞ THƯ -->
+    <div class="app-card" id="prompt-card">
+        <h1 id="title">Hello, Mẹ Yêu Dấu 🌸</h1>
+        <p class="text-gray-600 mb-6 text-lg">Hôm nay là ngày 20/10, Mẹ nhận được một lá thư bí mật từ con. Mẹ có muốn mở xem hongg?</p>
+        <div class="flex justify-center gap-4 flex-wrap">
+            <button id="reveal-btn" class="action-button">Mở thư ngay! <i data-lucide="mail-open" class="inline-block w-5 h-5 ml-1"></i></button>
+            <button id="deny-btn" class="action-button">Để sau 🙅‍♀️</button>
+        </div>
+    </div>
+    
+    <!-- STAGE 2: PHONG BÌ THƯ -->
+    <div class="envelope-wrapper" id="envelope-wrapper">
+        <div class="envelope">
+            <div class="lid"></div>
+            <div class="letter"></div>
+            <div class="heart-seal">
+                <i data-lucide="heart" class="text-red-500 w-10 h-10 fill-red-500"></i>
+            </div>
+        </div>
+        <p class="text-xl font-semibold text-gray-700 mt-4 text-center">Nhấn vào phong bì để mở thư</p>
+    </div>
+
+    <!-- STAGE 3: NỘI DUNG THƯ -->
+    <div class="app-card hidden-card" id="letter-card">
+        <h2 class="text-4xl mb-4 font-bold text-pink-600" style="font-family: 'Dancing Script', cursive;">Mừng Ngày 20/10!</h2>
+        <div class="letter-content">
+            <!-- Nội dung thư sẽ được đánh máy vào đây -->
+            <p id="main-message"></p>
+        </div>
+        <button id="continue-to-gallery-btn" class="action-button mt-8" style="background-color: var(--primary-color); color: white;">Xem album ảnh đặc biệt 🖼️</button>
+        <p class="signature" id="signature">-- Con yêu của Mẹ --</p>
+    </div>
+
+    <!-- STAGE 4: ALBUM ẢNH CÁ NHÂN -->
+    <div id="photo-gallery" class="hidden-card">
+        <h2 class="gallery-title text-center">Album Ảnh & Chú Thích Của Con ❤️</h2>
+        <p class="text-center text-gray-600 mb-8">Mỗi bức ảnh là một lời tự sự, một ký ức con muốn chia sẻ cùng Mẹ. Nhớ lướt để xem hết ảnh nha mẹ</p>
+        
+        <div class="album-container" id="photo-timeline">
+            <!-- Các album item sẽ được tạo ra bởi JavaScript -->
+        </div>
+    </div>
+
+
+    <script>
+        // Hàm hiển thị message box tùy chỉnh (thay thế alert)
+        function showMessage(message) {
+            const msgBox = document.getElementById('message-box');
+            const msgContent = document.getElementById('message-content');
+            msgContent.textContent = message;
+            msgBox.style.display = 'block';
+        }
+        document.getElementById('message-ok-btn').addEventListener('click', () => {
+            document.getElementById('message-box').style.display = 'none';
+            // Sau khi người dùng xác nhận, chuyển đến bước mở thư
+            document.getElementById('reveal-btn').click();
+        });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const promptCard = document.getElementById('prompt-card');
+            const revealBtn = document.getElementById('reveal-btn');
+            const denyBtn = document.getElementById('deny-btn');
+            const envelopeWrapper = document.getElementById('envelope-wrapper');
+            const letterCard = document.getElementById('letter-card');
+            const galleryBtn = document.getElementById('continue-to-gallery-btn');
+            const photoGallery = document.getElementById('photo-gallery');
+            const photoTimeline = document.getElementById('photo-timeline');
+            const music = document.getElementById('bg-music');
+            
+            // Khởi tạo icons của Lucide
+            lucide.createIcons();
+            
+            // ==========================================================
+            // CẦN CHỈNH SỬA: Danh sách các ảnh và chú thích cá nhân
+            // *QUAN TRỌNG:* Thay vì dùng 'src', hãy dùng 'sources' là một MẢNG các đường dẫn ảnh.
+            // ==========================================================
+            const photoList = [
+                { 
+                    sources: ['images/kethon.jpg'], 
+                    alt: 'Ảnh kết hôn của Mẹ và Ba',
+                    title: '🤵‍♂️👰 Ảnh đầu tay nè',
+                    caption: 'Cha chụp hình hơi bị sượng nha, mẹ thì tuyệt vời!' 
+                }, 
+                { 
+                    sources: ['images/luan_con_nho.jpg', 'images/khang_con_nho.jpg'], 
+                    alt: 'Ảnh 2 con trai mẹ lúc nhỏ',
+                    title: '👶 Thuở nhỏ',
+                    caption: 'Nhìn 2 đứa con trai mẹ dễ thương, đẹp trai chưa nè!' 
+                }, 
+                { 
+                    sources: ['images/khaigiang.jpg', 
+                    'images/2ad_nho.jpg', 
+                    'images/conut.jpg', 
+                    'images/contraicar.jpg', 
+                    'images/2ae2.jpg ',
+                    'images/2ae.jpg'],
+                    alt: 'Ảnh 2 con trai của mẹ từ nhỏ đến lớn nè',
+                    title: '🙎‍♂️🙎 Ảnh 2 con trai của mẹ từ nhỏ đến lớn nè',
+                    caption: 'Nhìn ảnh 2 đứa con của mẹ từ nhớ đến lớn như thế nào nè? Đẹp trai quá trời chưa, đều do cơm mẹ nấu đó!  ' 
+                }, 
+                { 
+                    sources: ['images/contraicar.jpg', 'images/lop5.jpg', 'images/lop9.jpg', 'images/lop10.jpg', 'images/contraitotnghiep.jpg', 'images/daihoc.jpg', 'images/khang_sothu.jpg'], 
+                    alt: 'Hành trình của con Khang',
+                    title: '📚 Hành trình của con Khang',
+                    caption: '14 năm học rồi đấy Mẹ ơi! Cảm ơn Mẹ đã luôn bên cạnh, động viên và hỗ trợ con trong suốt quãng thời gian học tập. Yêu Mẹ nhiều lắm!' 
+                },
+                { 
+                    sources: ['images/damcuoine.jpg','images/3nguoi_damcuoi.jpg','images/divengoai.jpg',
+                        'images/anhcanha.jpg','images/sn.jpg'], 
+                    alt: 'Ảnh kỉ niệm',
+                    title: '💖 Khoảnh Khắc Kỉ Niệm Của Gia Đình',
+                    caption: 'Mỗi bức ảnh là một kỉ niệm đẹp, một khoảnh khắc gia đình mình bên nhau. Cảm ơn Mẹ đã tạo nên những ký ức tuyệt vời này!' 
+                }, 
+                { 
+                    sources: ['images/sn1.jpg','images/sinhnhatcha.jpg', 'images/sinhnhatcon.jpg','images/sinhnhatemtrai.jpg'
+                    ],
+                    alt: 'Ảnh sinh nhật',
+                    title: '🎂 Sinh nhật đẹp đẽ',
+                    caption: 'Nhìn lại con mới nhận ra mình vẫn chưa có 1 lần nào được tổ chức sinh nhật cho mẹ! Bản thân con sẽ cố gắng cho mẹ 1 sinh nhật thật hoành tráng để bù đắp lại những thiếu sót trước đây!' 
+                },
+                { 
+                    sources: ['images/hehe.jpg','images/quahoido.jpg'
+                    ],
+                    alt: 'Quà của con',
+                    title: '🎉 Món quà tặng mẹ đầu tiên',
+                    caption: 'Món quà đầu tiên con tặng Mẹ. Con xin lỗi vì lúc ấy chưa suy nghĩ cho mẹ nhiều! Con hứa rằng sẽ cố gắng hơn để có thể tặng mẹ 1 món quà tốt hơn để nụ cười của mẹ vẫn luôn rạng rỡ!' 
+                },
+                { 
+                    sources: ['images/2017.jpg', 'images/2017_1.jpg', 'images/2017_2.jpg', 
+                              'images/me2020.jpg', // Đã thêm .jpg vào file mẹ2020
+                              'images/muadt.jpg'], 
+                    alt: 'Ảnh Mẹ yêu quý',
+                    title: '🌷 Mẹ Yêu Quý Của Con',
+                    caption: 'Mỗi bức ảnh lại thể hiện rõ mẹ đã già đi vì phải chăm lo cho chúng con! Nhưng đối với con, mẹ luôn là người phụ nữ đẹp nhất, rạng rỡ nhất trong mắt con!' 
+                }
+            ];
+            // ==========================================================
+
+            // 1. Dữ liệu Thư
+            const fullLetterText = 
+`Gửi Mẹ yêu quý của con,
+
+Nhân Ngày Phụ nữ Việt Nam 20/10, con xin gửi những lời chúc tốt đẹp nhất đến người phụ nữ tuyệt vời nhất trong cuộc đời con.
+
+Mẹ không chỉ là mẹ, mà còn là người bạn, người cô, và là nguồn động lực vô tận của con. Cảm ơn Mẹ vì tất cả những hy sinh, những lời dạy dỗ và tình yêu thương vô bờ bến mà Mẹ đã dành cho con.
+
+Con biết bản thân con nhiều lần khiến mẹ phải buồn lòng, lo lắng và khóc rất nhiều. Vì thế, con sẽ cố gắng trở thành một người con giỏi giang, có thể tự lo cho bản thân, một người mà Mẹ có thể tự hào.
+
+Con chúc Mẹ luôn thật nhiều sức khỏe, luôn xinh đẹp rạng ngời và mãi giữ nụ cười tươi trên môi. Mong Mẹ luôn hạnh phúc, vui vẻ và khỏe mạnh bên gia đình mình.
+
+Yêu Mẹ nhiều lắm! ❤️`;
+
+            // ==========================================================
+            // LOGIC PLAYLIST MỚI ĐÃ ĐƯỢC ĐƯA VÀO ĐÂY
+            // ==========================================================
+            
+            // CẦN CHỈNH SỬA: Danh sách các bài hát MP3 của bạn
+            const musicPlaylist = [
+                'nhatkicuame.mp3', // Bài 1: Ví dụ Nhật Ký Của Mẹ
+                'menuoi.mp3', // Bài 2: Ví dụ Gánh Mẹ
+                // Thêm các bài hát khác vào đây...
+            ];
+            let currentSongIndex = 0;
+            
+            // Hàm bắt đầu phát bài hát đầu tiên
+            function startPlaylist() {
+                if (musicPlaylist.length === 0) return;
+                
+                music.src = musicPlaylist[currentSongIndex];
+                music.play().catch(error => {
+                    console.log("Lỗi phát nhạc:", error);
+                });
+            }
+            
+            // Hàm chuyển sang bài hát tiếp theo
+            function playNextSong() {
+                // Tăng index và quay lại 0 nếu hết danh sách
+                currentSongIndex = (currentSongIndex + 1) % musicPlaylist.length; 
+                music.src = musicPlaylist[currentSongIndex];
+                music.play().catch(error => {
+                    console.log("Lỗi phát nhạc tiếp theo:", error);
+                });
+            }
+
+            // Lắng nghe sự kiện kết thúc bài hát để tự động chuyển bài
+            music.addEventListener('ended', playNextSong);
+
+            // ==========================================================
+            // LOGIC PLAYLIST KẾT THÚC Ở ĐÂY
+            // ==========================================================
+            
+            // 2. Hàm tạo Gallery ảnh (Đã thay đổi sang Album Cá Nhân với Carousel)
+            function generatePhotoGallery() {
+                photoTimeline.innerHTML = ''; // photoTimeline bây giờ là album-container
+                photoList.forEach((photo, index) => {
+                    const albumItem = document.createElement('div');
+                    albumItem.classList.add('album-item');
+                    albumItem.setAttribute('data-index', index); // Dùng cho initCarousels
+
+                    let photoHtml = '';
+                    if (photo.sources.length === 1) {
+                        // Trường hợp 1 ảnh: Hiển thị ảnh đơn giản
+                         photoHtml = `<img src="${photo.sources[0]}" alt="${photo.alt}" title="${photo.alt}" loading="lazy" 
+                                        onerror="this.onerror=null; this.src='https://placehold.co/400x300/d63384/ffffff?text=Kh%C3%B4ng%20t%C3%ACm%20th%E1%BA%A5y%20%E1%BA%A3nh'">`;
+                    } else {
+                        // Trường hợp nhiều ảnh: Tạo Carousel
+                        let slides = photo.sources.map(src => 
+                            `<div class="carousel-slide">
+                                <img src="${src}" alt="${photo.alt}" loading="lazy" 
+                                    onerror="this.onerror=null; this.src='https://placehold.co/400x300/d63384/ffffff?text=Kh%C3%B4ng%20t%C3%ACm%20th%E1%BA%A5y%20%E1%BA%A3nh'">
+                            </div>`
+                        ).join('');
+                        
+                        photoHtml = `
+                            <div class="carousel-container">
+                                <div class="carousel-track" data-current-slide="0" data-item-id="${index}">
+                                    ${slides}
+                                </div>
+                                <button class="carousel-nav-btn prev-btn" data-dir="prev" data-item-id="${index}">
+                                    <i data-lucide="chevron-left" class="w-6 h-6 text-pink-600"></i>
+                                </button>
+                                <button class="carousel-nav-btn next-btn" data-dir="next" data-item-id="${index}">
+                                    <i data-lucide="chevron-right" class="w-6 h-6 text-pink-600"></i>
+                                </button>
+                            </div>
+                        `;
+                    }
+                    
+                    // Tạo nội dung cho một mục album
+                    albumItem.innerHTML = `
+                        <div class="photo-box">
+                            ${photoHtml}
+                        </div>
+                        <div class="caption-box">
+                            <h3>${photo.title}</h3>
+                            <p>${photo.caption}</p>
+                            ${photo.sources.length > 1 ? '<p class="text-xs text-pink-500 mt-2"></p>' : ''}
+                        </div>
+                    `;
+                    photoTimeline.appendChild(albumItem);
+                });
+                
+                // Sau khi tạo HTML, khởi tạo Carousels
+                initCarousels();
+            }
+
+            // 3. Hàm khởi tạo và xử lý Carousel
+            function initCarousels() {
+                const tracks = document.querySelectorAll('.carousel-track');
+                
+                // Lặp qua tất cả các track (nếu có) để đặt chiều rộng ban đầu
+                tracks.forEach(track => {
+                    const slides = track.querySelectorAll('.carousel-slide');
+                    if (slides.length > 0) {
+                        // Chiều rộng tổng = Số slide * 100%
+                        track.style.width = `${slides.length * 100}%`;
+                        // Chiều rộng của mỗi slide trong track
+                        slides.forEach(slide => {
+                            slide.style.width = `${100 / slides.length}%`;
+                        });
+                    }
+                });
+
+                // Xử lý sự kiện click cho các nút điều hướng
+                document.querySelectorAll('.carousel-nav-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const itemId = e.currentTarget.getAttribute('data-item-id');
+                        const direction = e.currentTarget.getAttribute('data-dir');
+                        const track = document.querySelector(`.carousel-track[data-item-id="${itemId}"]`);
+                        
+                        if (!track) return;
+
+                        const totalSlides = track.querySelectorAll('.carousel-slide').length;
+                        let currentSlide = parseInt(track.getAttribute('data-current-slide') || 0);
+
+                        if (direction === 'next') {
+                            currentSlide = (currentSlide + 1) % totalSlides;
+                        } else if (direction === 'prev') {
+                            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                        }
+
+                        // Cập nhật vị trí trượt
+                        const translateX = -currentSlide * (100 / totalSlides);
+                        track.style.transform = `translateX(${translateX}%)`;
+                        track.setAttribute('data-current-slide', currentSlide);
+                    });
+                });
+            }
+
+            // 4. Hiệu ứng đánh máy
+            
+            function typeWriter() {
+                const textElement = document.getElementById('main-message');
+                const signatureElement = document.getElementById('signature');
+                const cursor = '<span class="typing-cursor">|</span>';
+                let i = 0;
+                textElement.innerHTML = cursor;
+                textElement.style.opacity = 1;
+                
+                function type() {
+                    if (i < fullLetterText.length) {
+                        textElement.innerHTML = fullLetterText.substring(0, i + 1) + cursor;
+                        i++;
+                        setTimeout(type, 50); // Tốc độ đánh máy
+                    } else {
+                        textElement.innerHTML = fullLetterText;
+                        signatureElement.style.opacity = '1';
+                        galleryBtn.style.display = 'inline-block';
+                    }
+                }
+                setTimeout(type, 500);
+            }
+
+            // 5. Hiệu ứng xuất hiện ảnh lần lượt
+            function revealPhotosSequentially() {
+                photoGallery.classList.remove('hidden-card');
+                photoGallery.style.display = 'block';
+
+                const albumItems = document.querySelectorAll('#photo-timeline .album-item');
+                albumItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.classList.add('visible'); 
+                    }, index * 600); 
+                });
+            }
+
+            // 6. Hàm chạy trốn của nút 'Để sau'
+            function runAway() {
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const btnRect = denyBtn.getBoundingClientRect();
+                
+                let newTop = Math.random() * (viewportHeight - btnRect.height - 50);
+                let newLeft = Math.random() * (viewportWidth - btnRect.width - 50);
+                
+                newTop = Math.max(0, newTop);
+                newLeft = Math.max(0, newLeft);
+
+                denyBtn.style.position = 'fixed'; 
+                denyBtn.style.zIndex = '9999';
+                denyBtn.style.top = newTop + 'px';
+                denyBtn.style.left = newLeft + 'px';
+            }
+            denyBtn.addEventListener('mouseover', runAway);
+            denyBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault(); 
+                runAway();
+            });
+            denyBtn.addEventListener('click', () => {
+                showMessage('Bắt được rồi hả Mẹ! Giỏi vậy! 😊 Thôi Mẹ mở thư đi mà! Đây là món quà nhỏ của con dành cho Mẹ!😆 ');
+            });
+            
+            // --- SỰ KIỆN CÁC STAGE ---
+
+            // STAGE 1: Bấm nút "Mở thư ngay!"
+            revealBtn.addEventListener('click', () => {
+                // SỬ DỤNG HÀM STARTPLAYLIST ĐÃ ĐỊNH NGHĨA Ở TRÊN
+                if (music.paused) {
+                    startPlaylist();
+                }
+                
+                promptCard.classList.add('hidden-card'); 
+                envelopeWrapper.style.display = 'block';
+            });
+            
+            // STAGE 2: Bấm vào phong bì
+            envelopeWrapper.addEventListener('click', () => {
+                envelopeWrapper.classList.add('open');
+                
+                setTimeout(() => {
+                    envelopeWrapper.style.display = 'none';
+                    letterCard.classList.remove('hidden-card');
+                    letterCard.style.display = 'block';
+                    typeWriter();
+                }, 1200);
+            });
+            
+            // STAGE 3: Bấm nút "Xem album ảnh đặc biệt"
+            galleryBtn.addEventListener('click', () => {
+                letterCard.classList.add('hidden-card'); 
+                
+                photoGallery.classList.remove('hidden-card');
+                photoGallery.style.display = 'block';
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                generatePhotoGallery(); 
+                revealPhotosSequentially();
+            });
+            
+        });
+    </script>
+
+</body>
+</html>
