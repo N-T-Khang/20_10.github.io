@@ -253,14 +253,21 @@
             transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.7);
             border: none;
-            padding: 8px;
+            /* [CHỈNH SỬA] Tăng padding để nút dễ bấm hơn trên di động */
+            padding: 10px; /* Tăng từ 8px lên 10px */
             cursor: pointer;
             z-index: 20;
             border-radius: 50%;
             transition: background 0.3s;
+            /* [MỚI] Thêm box-shadow nhẹ để nút nổi bật trên nền trắng */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
         }
+        /* Giữ nguyên hover */
         .carousel-nav-btn:hover {
             background: rgba(255, 255, 255, 0.9);
+        }
+        .prev-btn { left: 5px; } /* [CHỈNH SỬA] Giảm khoảng cách lề */
+        .next-btn { right: 5px; } /* [CHỈNH SỬA] Giảm khoảng cách lề */
         }
         .prev-btn { left: 10px; }
         .next-btn { right: 10px; }
@@ -588,7 +595,6 @@ Yêu Mẹ nhiều lắm! ❤️`;
             function initCarousels() {
                 const tracks = document.querySelectorAll('.carousel-track');
                 
-                // Lặp qua tất cả các track (nếu có) để đặt chiều rộng ban đầu
                 tracks.forEach(track => {
                     const slides = track.querySelectorAll('.carousel-slide');
                     if (slides.length > 0) {
@@ -601,28 +607,93 @@ Yêu Mẹ nhiều lắm! ❤️`;
                     }
                 });
 
+                // Hàm chung để di chuyển Carousel
+                function moveCarousel(track, direction) {
+                    const totalSlides = track.querySelectorAll('.carousel-slide').length;
+                    let currentSlide = parseInt(track.getAttribute('data-current-slide') || 0);
+
+                    if (direction === 'next') {
+                        currentSlide = (currentSlide + 1) % totalSlides;
+                    } else if (direction === 'prev') {
+                        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                    }
+
+                    const translateX = -currentSlide * (100 / totalSlides);
+                    track.style.transform = `translateX(${translateX}%)`;
+                    track.setAttribute('data-current-slide', currentSlide);
+                }
+
                 // Xử lý sự kiện click cho các nút điều hướng
                 document.querySelectorAll('.carousel-nav-btn').forEach(button => {
                     button.addEventListener('click', (e) => {
+                        // Ngăn chặn sự kiện lan ra (đặc biệt quan trọng nếu nút nằm trong khu vực vuốt)
+                        e.stopPropagation(); 
                         const itemId = e.currentTarget.getAttribute('data-item-id');
                         const direction = e.currentTarget.getAttribute('data-dir');
                         const track = document.querySelector(`.carousel-track[data-item-id="${itemId}"]`);
                         
-                        if (!track) return;
+                        if (track) {
+                            moveCarousel(track, direction);
+                        }
+                    });
+                });
+                
+                // Xử lý sự kiện VUỐT (SWIPE) cho mỗi carousel-container
+                document.querySelectorAll('.carousel-container').forEach(container => {
+                    let startX = 0;
+                    let endX = 0;
+                    const SWIPE_THRESHOLD = 50; // Khoảng cách vuốt tối thiểu
 
+                    const track = container.querySelector('.carousel-track');
+
+                    container.addEventListener('touchstart', (e) => {
+                        // Chỉ quan tâm đến 1 chạm
+                        startX = e.touches[0].clientX;
+                        // Tạm thời tắt transition để vuốt mượt hơn
+                        track.style.transition = 'none'; 
+                    }, { passive: true }); // Dùng passive: true để tối ưu cuộn
+
+                    container.addEventListener('touchmove', (e) => {
+                        endX = e.touches[0].clientX;
+                        const diff = endX - startX;
                         const totalSlides = track.querySelectorAll('.carousel-slide').length;
-                        let currentSlide = parseInt(track.getAttribute('data-current-slide') || 0);
+                        const currentSlideIndex = parseInt(track.getAttribute('data-current-slide') || 0);
+                        
+                        // Tính toán vị trí dịch chuyển tạm thời dựa trên vuốt
+                        const slideWidthPercent = 100 / totalSlides;
+                        const currentOffset = -currentSlideIndex * slideWidthPercent; // Vị trí hiện tại
+                        const dragOffset = diff / container.offsetWidth * slideWidthPercent; // Dịch chuyển theo vuốt
+                        
+                        // Áp dụng dịch chuyển tạm thời
+                        track.style.transform = `translateX(${currentOffset + dragOffset}%)`;
 
-                        if (direction === 'next') {
-                            currentSlide = (currentSlide + 1) % totalSlides;
-                        } else if (direction === 'prev') {
-                            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+                    }, { passive: true });
+
+                    container.addEventListener('touchend', () => {
+                        // Bật lại transition
+                        track.style.transition = 'transform 0.5s ease-in-out';
+                        
+                        const swipeDistance = endX - startX;
+
+                        if (Math.abs(swipeDistance) > SWIPE_THRESHOLD) {
+                            if (swipeDistance > 0) {
+                                // Vuốt sang phải -> Ảnh trước
+                                moveCarousel(track, 'prev');
+                            } else {
+                                // Vuốt sang trái -> Ảnh tiếp theo
+                                moveCarousel(track, 'next');
+                            }
+                        } else {
+                            // Nếu không đủ ngưỡng, trượt về vị trí ban đầu
+                            const totalSlides = track.querySelectorAll('.carousel-slide').length;
+                            const currentSlideIndex = parseInt(track.getAttribute('data-current-slide') || 0);
+                            const translateX = -currentSlideIndex * (100 / totalSlides);
+                            track.style.transform = `translateX(${translateX}%)`;
                         }
 
-                        // Cập nhật vị trí trượt
-                        const translateX = -currentSlide * (100 / totalSlides);
-                        track.style.transform = `translateX(${translateX}%)`;
-                        track.setAttribute('data-current-slide', currentSlide);
+                        // Reset giá trị
+                        startX = 0;
+                        endX = 0;
                     });
                 });
             }
